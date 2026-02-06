@@ -296,10 +296,11 @@ Select metric → Metric explorer → вводим ByzgaevA
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/8%20Metricks.png) 
 
 
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Grafana.png) 
 
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Docker%20ps%202.png)
 
-
-
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Stop.png)
 
 
 
