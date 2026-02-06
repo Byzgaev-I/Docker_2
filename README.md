@@ -300,6 +300,9 @@ Select metric → Metric explorer → вводим ByzgaevA
 
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Docker%20ps%202.png)
 
+## Задание 8
+## Остановка и удаление контейнеров
+
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Stop.png)
 
 
