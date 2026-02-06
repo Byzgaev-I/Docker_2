@@ -40,10 +40,9 @@ mkdir -p prometheus grafana
 ```
 Создаем файл конфигурации Prometheus
 
-## prometheus.yml
+### prometheus.yml
 
 ```bash
-# my global config
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -60,9 +59,241 @@ scrape_configs:
     honor_labels: true
     static_configs:
       - targets: ["pushgateway:9091"]
+```
+### Далее Создаем файл конфигурации Grafana  
 
+```bash
+[security]
+admin_user = ByzgaevA
+admin_password = netology
+```
+### Создаем базовый docker-compose.yml
+
+```bash
+version: '3.8'
+
+services:
+
+volumes:
+
+networks:
+  ByzgaevA-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 ```
 
+
+## Задание 3 
+## Добавление Prometheus
+
+```bash
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ByzgaevA-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - ByzgaevA-my-netology-hw
+
+volumes:
+  prometheus-data:
+
+networks:
+  ByzgaevA-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+```
+## Задание 4
+## Добавление Pushgateway
+```bash
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ByzgaevA-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - ByzgaevA-my-netology-hw
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: ByzgaevA-netology-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - ByzgaevA-my-netology-hw
+
+volumes:
+  prometheus-data:
+
+networks:
+  ByzgaevA-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+```
+## Задание 5
+## Добавление Grafana
+```bash
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ByzgaevA-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - ByzgaevA-my-netology-hw
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: ByzgaevA-netology-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - ByzgaevA-my-netology-hw
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ByzgaevA-netology-grafana
+    ports:
+      - "80:3000"
+    volumes:
+      - ./grafana/custom.ini:/etc/grafana/grafana.ini
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    networks:
+      - ByzgaevA-my-netology-hw
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  ByzgaevA-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+```
+## Задание 6
+## Добавление Настройка поочередности запуска, перезапуска и сети
+
+### Финальный docker-compose.yml:
+
+```bash
+version: '3.8'
+
+services:
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: ByzgaevA-netology-pushgateway
+    ports:
+      - "9091:9091"
+    restart: unless-stopped
+    networks:
+      - ByzgaevA-my-netology-hw
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ByzgaevA-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    depends_on:
+      - pushgateway
+    networks:
+      - ByzgaevA-my-netology-hw
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ByzgaevA-netology-grafana
+    ports:
+      - "80:3000"
+    volumes:
+      - ./grafana/custom.ini:/etc/grafana/grafana.ini
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - ByzgaevA-my-netology-hw
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  ByzgaevA-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+```
+### Запускаем в detached режиме:
+
+```bash
+docker-compose up -d
+```
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Запускаем%20detached.png) 
+
+### Проверяем запущенные контейнеры:
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/DockerPS.png) 
+
+## Задание 7
+## Работа с метриками
+
+### Отправляю метрику в Pushgateway
+```bash
+echo "ByzgaevA 5" | curl --data-binary @- http://localhost:9091/metrics/job/netology
+```
+### Логинюсь в Grafana  
+Открываю в браузере и перехожуна http://localhost  
+  
+Логин: ByzgaevA    
+Пароль: netology    
+
+### Создаем Data Source Prometheus  
+  
+Home → Connections → Data sources → Add data source  
+Выбираю Prometheus  
+В поле "Prometheus server URL" вводим: http://prometheus:9090  
+Нажимаю "Save & Test"  
+
+### Создаю график  
+  
+Build a dashboard → Add visualization → Prometheus  
+Select metric → Metric explorer → вводим ByzgaevA  
+
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/7%20metricks.png)
+
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/8%20Metricks.png) 
 
 
 
