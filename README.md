@@ -26,8 +26,74 @@ networks.
 При выполнении задания используйте подсеть 10.5.0.0/16. Ваша подсеть должна называться: <ваши фамилия и инициалы>-my-netology-hw. 
 Все приложения из последующих заданий должны находиться в этой конфигурации.  
 
-Создаем рабочую директорию
+Создаем рабочую директорию  
+
 ```bash
 mkdir -p ~/netology-docker
 cd ~/netology-docker
 ```
+![image](https://github.com/Byzgaev-I/Docker_2/blob/main/2%20задание.png)
+
+Создаем директории для конфигураций
+```bash
+mkdir -p prometheus grafana
+```
+Создаем файл конфигурации Prometheus
+
+## prometheus.yml
+
+```bash
+# my global config
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+
+rule_files:
+
+scrape_configs:
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
