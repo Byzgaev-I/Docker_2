@@ -289,12 +289,11 @@ Home → Connections → Data sources → Add data source
 ### Создаю график  
   
 Build a dashboard → Add visualization → Prometheus  
-Select metric → Metric explorer → вводим ByzgaevA  
+Select metric → Metric explorer → ввожу ByzgaevA  
 
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/7%20metricks.png)
 
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/8%20Metricks.png) 
-
 
 ![image](https://github.com/Byzgaev-I/Docker_2/blob/main/Grafana.png) 
 
